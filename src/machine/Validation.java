@@ -23,4 +23,32 @@ public class Validation {
             number=readInteger(bf);
         }
     }
+    public static String readNoBlankLine(BufferedReader bf)throws IOException {
+        while (true) {
+            String input = bf.readLine();
+            if (input != null && !input.trim().isEmpty()) {
+                return input.trim();
+            }
+            System.out.println("Try Again");
+        }
+    }
+    public static String goodOption(String option,BufferedReader bf)throws IOException{
+        while (true){
+            if (option.equals("buy")||option.equals("fill")||option.equals("take")){
+                return option;
+            }
+            System.out.println("Not an option, the options are: buy, fill, take");
+            option=readNoBlankLine(bf);
+        }
+    }
+    public static int integerCoffeeOptions(int integer, BufferedReader bf)throws IOException{
+        //Validation.readNonNegativeInt(integer,bf);
+        while (true){
+            if (!(integer<1||integer>3)){
+                return integer;
+            }
+            System.out.println("Not an option, the options are: 1 - espresso, 2 - latte, 3 - cappuccino");
+            integer=Validation.readInteger(bf);
+        }
+    }
 }
