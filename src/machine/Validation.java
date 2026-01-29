@@ -19,7 +19,7 @@ public class Validation {
     public static int readNonNegativeInt(int number,BufferedReader bf)throws IOException {
         while (true) {
             if (number >= 0) return number;
-            System.out.println("I cant count negatives, try again");
+            System.out.println("Pleas do not use negative numbers");
             number=readInteger(bf);
         }
     }
