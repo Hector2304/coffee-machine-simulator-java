@@ -37,13 +37,25 @@ The project was developed incrementally, following Hyperskill’s staged approac
      - `fill` (refill resources)
      - `take` (collect money)
    - Update and display the machine state accordingly.
+     
+5. **Interactive loop**
+   - Allow continuous user interaction until `exit`.
+   - Add commands:
+     - `remaining` to show current machine state
+     - `back` to return to the main menu when buying coffee
 
+6. **Cleaning cycle**
+   - Track how many coffees have been made.
+   - Require cleaning after 10 coffees.
+   - Add a `clean` action to reset the machine and resume operation.
 ---
 
 ## Features
 
 - Resource tracking (water, milk, coffee beans, disposable cups, money)
 - Input validation to prevent invalid or negative values
+- Interactive command loop (`buy`, `fill`, `take`, `remaining`, `clean`, `exit`)
+- Automatic cleaning requirement after 10 coffees
 - Clear separation of responsibilities using classes
 - Console-based interaction
 
