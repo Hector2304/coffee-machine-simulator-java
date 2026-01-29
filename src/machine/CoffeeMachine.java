@@ -62,12 +62,14 @@ class Machine{
     protected int coffeBeans;
     protected int money;
     protected int disposableCups;
+    protected boolean state;
     public Machine(){
         setWaterMl(400);
         setMilkMl(540);
         setCoffeBeans(120);
         setMoney(550);
         setDisposableCups(9);
+        setState(true);
     }
     public void machineResources(){
         System.out.println("The coffee machine has:\n" +
@@ -78,7 +80,7 @@ class Machine{
                 getMoney() +" of money");
     }
     public void machineActions(BufferedReader bf)throws IOException{
-        System.out.println("Write action (buy, fill, take):");
+        System.out.println("Write action (buy, fill, take, remaining, exit):");
         String userOption=Validation.readNoBlankLine(bf);
         userOption=Validation.goodOption(userOption,bf);
         switch (userOption){
@@ -90,49 +92,58 @@ class Machine{
                 break;
             case "take":
                 takeFromMachine();
+                break;
+            case "remaining":
+                machineResources();
+                break;
+            case "exit":
+                exitMachine();
+                break;
         }
     }
     public void buy(BufferedReader bf)throws IOException{
-        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino: ");
-        int coffeeOption=Validation.readInteger(bf);
-        coffeeOption=Validation.integerCoffeeOptions(coffeeOption,bf);
+        System.out.println("1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:");
+        String coffeeOption=Validation.readNoBlankLine(bf);
+        coffeeOption=Validation.buyOptions(coffeeOption,bf);
         switch (coffeeOption){
-            case 1:
+            case "1":
                 CoffeeCup espresso=new CoffeeCup(250,0,16,4);
                 makingCoffee(espresso);
                 break;
-            case 2:
+            case "2":
                 CoffeeCup latte=new CoffeeCup(350,75,20,7);
                 makingCoffee(latte);
                 break;
-            case 3:
+            case "3":
                 CoffeeCup cappuccino=new CoffeeCup(200,100,12,6);
                 makingCoffee(cappuccino);
+                break;
+            case "back":
                 break;
         }
     }
 
     public void makingCoffee(CoffeeCup coffeeCup){
-        int maxByWater = coffeeCup.getWaterMl() > 0 ? getWaterMl() / coffeeCup.getWaterMl() : Integer.MAX_VALUE;
-        int maxByMilk = coffeeCup.getMilkMl() > 0 ? getMilkMl() / coffeeCup.getMilkMl() : Integer.MAX_VALUE;
-        int maxByBeans = coffeeCup.getCoffeBeans() > 0 ? getCoffeBeansG() / coffeeCup.getCoffeBeans() : Integer.MAX_VALUE;
-        int maxCups = Math.min(maxByWater,
-                Math.min(maxByMilk, maxByBeans));
-        if (maxCups >= 1) {
-            setWaterMl(waterMl-coffeeCup.getWaterMl());
-            setMilkMl(milkMl-coffeeCup.getMilkMl());
-            setCoffeBeans(coffeBeans-coffeeCup.getCoffeBeans());
-            setDisposableCups(disposableCups-1);
-            setMoney(money+coffeeCup.getPrice());
-            System.out.println("The coffee machine has:\n" +
-                    getWaterMl() +" ml of water\n" +
-                    getMilkMl() +" ml of milk\n" +
-                    getCoffeBeansG() +" g of coffee beans\n" +
-                    getDisposableCups() +" disposable cups\n$" +
-                    getMoney() +" of money");
-        }  else {
-            System.out.println("Not enough resources");
+        String lacking=lackingResource(coffeeCup);
+        if (lacking!=null) {
+            System.out.println("Sorry, not enough "+lacking+"!");
+        }else {
+            setWaterMl(getWaterMl()-coffeeCup.getWaterMl());
+            setMilkMl(getMilkMl()-coffeeCup.getMilkMl());
+            setCoffeBeans(getCoffeBeansG()-coffeeCup.getCoffeBeans());
+            setDisposableCups(getDisposableCups()-1);
+            setMoney(getMoney()+coffeeCup.getPrice());
+            System.out.println("I have enough resources, making you a coffee!");
         }
+
+
+    }
+    private String lackingResource(CoffeeCup cup) {
+        if (getDisposableCups() < 1) return "disposable cups";
+        if (getWaterMl() < cup.getWaterMl()) return "water";
+        if (getMilkMl() < cup.getMilkMl()) return "milk";
+        if (getCoffeBeansG() < cup.getCoffeBeans()) return "coffee beans";
+        return null;
     }
     public void fillMachine(BufferedReader bf)throws IOException {
         System.out.println("Write how many ml of water you want to add:");
@@ -152,12 +163,13 @@ class Machine{
         setMilkMl(getMilkMl()+addMilk);
         setCoffeBeans(getCoffeBeansG()+addCoffeeBeans);
         setDisposableCups(getDisposableCups()+adddisposableCups);
-        machineResources();
     }
     public void takeFromMachine(){
         System.out.println("I gave you $"+ getMoney());
         setMoney(0);
-        machineResources();
+    }
+    public  void exitMachine(){
+        setState(false);
     }
     //Getters Setters
     public int getWaterMl() {
@@ -199,14 +211,23 @@ class Machine{
     public void setDisposableCups(int disposableCups) {
         this.disposableCups = disposableCups;
     }
+
+    public boolean isState() {
+        return state;
+    }
+
+    public void setState(boolean state) {
+        this.state = state;
+    }
 }
 
 public class CoffeeMachine {
     public static void main(String[] args) {
         try (BufferedReader bf=new BufferedReader(new InputStreamReader(System.in))){
             Machine machine = new Machine();
-            machine.machineResources();
-            machine.machineActions(bf);
+            while (machine.isState()){
+                machine.machineActions(bf);
+            }
         }catch (IOException e){
             System.out.println("Input error");
         }

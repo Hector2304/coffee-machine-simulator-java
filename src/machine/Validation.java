@@ -34,13 +34,15 @@ public class Validation {
     }
     public static String goodOption(String option,BufferedReader bf)throws IOException{
         while (true){
-            if (option.equals("buy")||option.equals("fill")||option.equals("take")){
+            if (option.equals("buy")||option.equals("fill")||option.equals("take")||option.equals("remaining")
+                    ||option.equals("exit")){
                 return option;
             }
             System.out.println("Not an option, the options are: buy, fill, take");
             option=readNoBlankLine(bf);
         }
     }
+    /*
     public static int integerCoffeeOptions(int integer, BufferedReader bf)throws IOException{
         //Validation.readNonNegativeInt(integer,bf);
         while (true){
@@ -49,6 +51,16 @@ public class Validation {
             }
             System.out.println("Not an option, the options are: 1 - espresso, 2 - latte, 3 - cappuccino");
             integer=Validation.readInteger(bf);
+        }
+    }
+    */
+    public static String buyOptions(String option,BufferedReader bf)throws IOException{
+        while (true){
+            if (option.equals("1")||option.equals("2")||option.equals("3")||option.equals("back")){
+                return option;
+            }
+            System.out.println("Not an option, the options are: 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu");
+            option=readNoBlankLine(bf);
         }
     }
 }
